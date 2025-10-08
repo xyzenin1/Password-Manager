@@ -50,6 +50,7 @@ int main() {
 
     int choice;
     string site, password;
+    bool encryptStatus;
     manager.loadMasterKey();
     
     do {
@@ -74,10 +75,24 @@ int main() {
             viewPassword();
             break;
         case 3:
-            manager.encrypt();
+            encryptStatus = manager.isEncrypted();
+            if (encryptStatus == false) {
+                manager.encrypt();
+            }
+            else {
+                cerr << "Passwords are already encrypted!" << endl;
+                break;
+            }
             break;
         case 4:
-            manager.decrypt();
+            encryptStatus = manager.isEncrypted();
+            if (encryptStatus == true) {
+                manager.decrypt();
+            }
+            else {
+                cerr << "Passwords are already decrypted!" << endl;
+                break;
+            }
             break;
         case 5:
             manager.setMasterKey();

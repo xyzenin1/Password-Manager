@@ -22,6 +22,7 @@ public:
     void decrypt();
     void setMasterKey();
     void loadMasterKey();
+    bool isEncrypted();
 
 };
 
@@ -68,7 +69,12 @@ void encdec::encrypt() {
         }
         outFile << encrypted << "\n";
     }
-    cout << "Passwords encrypted!";
+
+    ofstream statusFile("encrypted_status.txt");
+    statusFile << "encrypted";
+    statusFile.close();
+
+    cout << "\nPasswords encrypted successfully!\n";
     outFile.close();
 }
 
@@ -114,8 +120,13 @@ void encdec::decrypt() {
         }
         outFile << decrypted << "\n";
     }
+
+    ofstream statusFile("encrypted_status.txt");
+    statusFile << "decrypted";
+    statusFile.close();
+
     outFile.close();
-    cout << "File decrypted successfully!" << endl;
+    cout << "\nFile decrypted successfully!" << endl;
 
 }
 
@@ -136,10 +147,16 @@ void encdec::setMasterKey() {
 
             while (!setKey) {
                 if (overwrite == 'y') {
+                    bool status;
+                    status = isEncrypted();
+                    if (status == true) {
+                        cerr << "Decrypt the file first to change key!" << endl;
+                        return;
+                    }
                     cout << "Enter an encryption key: ";
                     cin >> key;
 
-                    if (cin.fail()) {
+                    if (cin.fail() || key < 1 || key > 255) {
                         cin.clear();
                         cin.ignore(numeric_limits<streamsize>::max());
                         cerr << "Invalid Key! has to be a numebr!";
@@ -174,7 +191,7 @@ void encdec::setMasterKey() {
             cout << "Enter an encryption key: ";
             cin >> key;
 
-            if (cin.fail()) {
+            if (cin.fail() || key < 1 || key > 255) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max());
                 cerr << "Invalid Key! has to be a numebr!";
@@ -199,7 +216,7 @@ void encdec::setMasterKey() {
         cout << "Enter an encryption key: ";
         cin >> key;
 
-        if (cin.fail()) {
+        if (cin.fail() || key < 1 || key > 255) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max());
             cerr << "Invalid Key! has to be a numebr!";
@@ -231,6 +248,22 @@ void encdec::loadMasterKey() {
     else {
         keyIsSet = false;
     }
+}
+
+bool encdec::isEncrypted() {
+    ifstream file("encrypted_status.txt");
+    if (file.is_open()) {
+        string status;
+        file >> status;
+        file.close();
+        if (status == "encrypted") {
+            return true;
+        }
+        else if (status == "decrypted") {
+            return false;
+        }
+    }
+    return false;
 }
 
 

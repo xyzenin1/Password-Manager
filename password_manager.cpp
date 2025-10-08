@@ -1,9 +1,6 @@
-#include <iostream>
-#include <string>
-#include <fstream>      // read/write files
-#include <limits>
+#include "encdec.h"
 
-using namespace std;
+encdec manager;
 
 // display any message
 void displayMessage(const string& msg) {
@@ -15,8 +12,11 @@ void displayMenu() {
     displayMessage("\n Password Manager");
     displayMessage("1. Add Password");
     displayMessage("2. View Passwords");
-    displayMessage("3. Exit");
-    displayMessage("Enter your choice: ");
+    displayMessage("3. Encrypt Passwords");
+    displayMessage("4. Decrypt Passwords");
+    displayMessage("5. Set Master Key");
+
+    displayMessage("6. Exit");
 }
 
 void savePassword(const string& site, const string& password) {
@@ -50,9 +50,11 @@ int main() {
 
     int choice;
     string site, password;
+    manager.loadMasterKey();
     
     do {
         displayMenu();
+        cout << "Enter your choice: ";
         cin >> choice;
 
         if (cin.fail()) {
@@ -72,6 +74,15 @@ int main() {
             viewPassword();
             break;
         case 3:
+            manager.encrypt();
+            break;
+        case 4:
+            manager.decrypt();
+            break;
+        case 5:
+            manager.setMasterKey();
+            break;
+        case 6:
             cout << "Bye Bye!";
             break;
         default:
@@ -80,7 +91,7 @@ int main() {
     }
     
         
-    } while (choice != 3);
+    } while (choice != 6);
 
     return 0;
 }

@@ -15,8 +15,9 @@ void displayMenu() {
     displayMessage("3. Encrypt Passwords");
     displayMessage("4. Decrypt Passwords");
     displayMessage("5. Set Master Key");
+    displayMessage("6. Delete Password");
 
-    displayMessage("6. Exit");
+    displayMessage("7. Exit");
 }
 
 void savePassword(const string& site, const string& password) {
@@ -44,6 +45,49 @@ void viewPassword() {
     else {
         cerr << "\nNo passwords saved yet!\n";
     }
+}
+
+void deletePassword() {
+    string siteName;
+    cout << "Enter the site name of the password you want to delete: ";
+    cin >> siteName;
+
+    ifstream inFile("password.txt");
+    if (!inFile.is_open()) {
+        cerr << "File could not be opened!" << endl;
+        return;
+    }
+
+    vector<string> lines;
+    string site, password;
+    bool found = false;
+    
+    while (inFile >> site >> password) {
+        if (site == siteName) {
+            found = true;
+        }
+        else {
+            lines.push_back(site + " " + password);
+        }
+    }
+
+    if (!found) {
+        cerr << "No site with that name was found in file!\n";
+        return;
+    }
+
+    inFile.close();
+
+    ofstream outFile("password.txt");
+    if (!outFile.is_open()) {
+        cerr << "Password could not be deleted in file.\n";
+    }
+
+    for (const string& line : lines) {
+        outFile << line << '\n';
+    }
+    outFile.close();
+    cout << "Password deleted!" << endl;
 }
 
 int main() {
@@ -98,6 +142,9 @@ int main() {
             manager.setMasterKey();
             break;
         case 6:
+            deletePassword();
+            break;
+        case 7:
             cout << "Bye Bye!";
             break;
         default:
@@ -106,7 +153,7 @@ int main() {
     }
     
         
-    } while (choice != 6);
+    } while (choice != 7);
 
     return 0;
 }
